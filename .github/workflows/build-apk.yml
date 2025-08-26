@@ -1,0 +1,172 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'APK Version'
+        required: false
+        default: '1.0'
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Set up Java JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt update -qq
+        sudo apt install -y git zip unzip wget curl
+        sudo apt install -y build-essential libffi-dev libssl-dev
+        sudo apt install -y python3-dev python3-pip
+    
+    - name: Install Python dependencies
+      run: |
+        pip install --upgrade pip
+        pip install buildozer cython==0.29.33
+        pip install kivy kivymd requests pyyaml aiohttp plyer loguru
+    
+    - name: Set up Android SDK environment
+      run: |
+        echo "ANDROID_HOME=/opt/android-sdk" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=/opt/android-sdk" >> $GITHUB_ENV
+        echo "JAVA_HOME=${JAVA_HOME}" >> $GITHUB_ENV
+    
+    - name: Cache buildozer dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.buildozer
+          ~/.cache/pip
+        key: ${{ runner.os }}-buildozer-${{ hashFiles('mobile/buildozer.spec') }}
+        restore-keys: |
+          ${{ runner.os }}-buildozer-
+    
+    - name: Build APK
+      working-directory: mobile
+      run: |
+        # 设置环境变量
+        export ANDROID_HOME=/opt/android-sdk
+        export ANDROID_SDK_ROOT=/opt/android-sdk
+        export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+        
+        # 初始化buildozer（如果需要）
+        if [ ! -f buildozer.spec ]; then
+          buildozer init
+        fi
+        
+        # 构建APK
+        buildozer android debug
+        
+        # 验证APK生成
+        ls -la bin/
+        if [ -f bin/*.apk ]; then
+          echo "APK构建成功!"
+          du -h bin/*.apk
+        else
+          echo "APK构建失败!"
+          exit 1
+        fi
+    
+    - name: Rename APK with version
+      working-directory: mobile
+      run: |
+        VERSION="${{ github.event.inputs.version || '1.0' }}"
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        
+        for apk in bin/*.apk; do
+          if [ -f "$apk" ]; then
+            filename=$(basename "$apk" .apk)
+            new_name="闲鱼自动评论助手_v${VERSION}_${TIMESTAMP}.apk"
+            cp "$apk" "bin/${new_name}"
+            echo "APK重命名: $apk -> bin/${new_name}"
+          fi
+        done
+    
+    - name: Upload APK artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: 闲鱼自动评论助手-Android-APK
+        path: |
+          mobile/bin/*.apk
+        retention-days: 30
+    
+    - name: Create Release (on tag)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: mobile/bin/*.apk
+        tag_name: ${{ github.ref_name }}
+        name: 闲鱼自动评论助手 ${{ github.ref_name }}
+        body: |
+          ## 🎉 闲鱼自动评论助手 Android APK
+          
+          ### 📱 安装说明
+          1. 下载APK文件到Android设备
+          2. 开启"未知来源"安装权限
+          3. 点击APK文件安装
+          4. 授予必要权限
+          
+          ### 📋 版本信息
+          - **版本**: ${{ github.ref_name }}
+          - **构建时间**: ${{ github.run_number }}
+          - **支持系统**: Android 6.0+ (API 23+)
+          - **架构**: armeabi-v7a, arm64-v8a
+          
+          ### ⚠️ 使用说明
+          - 此APK为移动端UI版本
+          - 完整功能需要配合桌面版本使用
+          - 仅供学习和研究用途
+          
+          ### 🔧 技术规格
+          - 基于 Kivy + KivyMD 开发
+          - Material Design UI风格
+          - 支持多架构Android设备
+          - 完整权限和兼容性配置
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Build summary
+      run: |
+        echo "## 🎯 构建完成总结" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📱 生成的APK文件:" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -d mobile/bin ]; then
+          cd mobile/bin
+          for apk in *.apk; do
+            if [ -f "$apk" ]; then
+              size=$(du -h "$apk" | cut -f1)
+              echo "- **$apk** (${size})" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔽 下载方式:" >> $GITHUB_STEP_SUMMARY
+        echo "1. 点击Actions页面的构建结果" >> $GITHUB_STEP_SUMMARY
+        echo "2. 在Artifacts部分下载APK文件" >> $GITHUB_STEP_SUMMARY
+        echo "3. 或等待Release自动发布" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### ⏰ 构建时间: $(date)" >> $GITHUB_STEP_SUMMARY

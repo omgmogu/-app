@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Manifest模板文件 -->
+<!-- 此文件用于参考，实际的AndroidManifest.xml由buildozer自动生成 -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xianyuassistant.xianyucommentassistant"
+    android:versionCode="1"
+    android:versionName="1.0"
+    android:installLocation="auto">
+
+    <!-- 最低SDK版本 -->
+    <uses-sdk android:minSdkVersion="23"
+              android:targetSdkVersion="33" />
+
+    <!-- 必需权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    
+    <!-- 存储权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Android 11+ 存储权限 -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" 
+                     android:maxSdkVersion="30" />
+
+    <!-- 系统权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    
+    <!-- 设备信息权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    
+    <!-- 系统设置权限 -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    
+    <!-- 多媒体权限（可选）-->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    
+    <!-- 位置权限（可选）-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- 硬件特性声明（可选）-->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="true" />
+    <uses-feature android:name="android.hardware.wifi" android:required="false" />
+
+    <application
+        android:label="@string/app_name"
+        android:icon="@drawable/icon"
+        android:theme="@style/Theme.AppCompat.Light"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true"
+        android:allowBackup="true"
+        android:supportsRtl="false"
+        android:extractNativeLibs="true"
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true">
+
+        <!-- 主Activity -->
+        <activity
+            android:name="org.kivy.android.PythonActivity"
+            android:label="@string/app_name"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            
+            <!-- 支持文件关联（可选）-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="xianyuassistant" />
+            </intent-filter>
+        </activity>
+
+        <!-- 后台服务（如果需要）-->
+        <service 
+            android:name="org.kivy.android.PythonService"
+            android:process=":pythonservice"
+            android:exported="false" />
+
+        <!-- 文件提供器（Android 7+文件共享）-->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- 网络安全配置（Android 9+）-->
+        <meta-data
+            android:name="android.webkit.WebView.MetricsOptOut"
+            android:value="true" />
+            
+        <!-- 应用元数据 -->
+        <meta-data 
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+    </application>
+
+    <!-- 网络安全配置 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
+    <!-- 查询已安装应用权限（Android 11+）-->
+    <queries>
+        <package android:name="com.taobao.idlefish" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+
+</manifest>

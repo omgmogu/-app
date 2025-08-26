@@ -1,0 +1,153 @@
+# 闲鱼自动评论助手配置文件
+
+# 闲鱼APP相关配置
+xianyu_app:
+  package_name: "com.taobao.idlefish"
+  main_activity: ".maincontainer.activity.MainActivity" 
+  app_name: "闲鱼"
+  version_check: true
+  wait_timeout: 30
+
+# Appium连接配置
+appium:
+  server_url: "http://localhost:4723/wd/hub"
+  desired_caps:
+    platformName: "Android"
+    automationName: "UiAutomator2"
+    appPackage: "com.taobao.idlefish"
+    appActivity: ".maincontainer.activity.MainActivity"
+    noReset: true
+    newCommandTimeout: 300
+    settings[waitForIdleTimeout]: 100
+    unicodeKeyboard: true
+    resetKeyboard: true
+  implicit_wait: 10
+  page_load_timeout: 30
+
+# DeepSeek API配置
+deepseek_api:
+  api_key: ""  # 请填入您的DeepSeek API密钥
+  base_url: "https://api.deepseek.com/v1"
+  model: "deepseek-chat"
+  max_tokens: 200
+  temperature: 0.7
+  timeout: 30
+  retry_count: 3
+
+# 反检测配置
+anti_detection:
+  comment_interval:
+    min: 15  # 最小间隔（秒）
+    max: 45  # 最大间隔（秒）
+  typing_speed:
+    min: 50   # 最小打字间隔（毫秒）
+    max: 150  # 最大打字间隔（毫秒）
+  daily_limit: 100      # 每日最大评论数
+  hourly_limit: 20      # 每小时最大评论数
+  scroll_before_comment: true   # 评论前滚动
+  random_pause: true            # 随机暂停
+  human_behavior:
+    mouse_move_delay: [0.1, 0.3]  # 鼠标移动延迟范围
+    click_delay: [0.2, 0.8]       # 点击延迟范围
+    scroll_delay: [1.0, 3.0]      # 滚动延迟范围
+
+# 闲鱼界面元素定位配置
+xianyu_selectors:
+  # 搜索相关
+  search_btn: "com.taobao.idlefish:id/search_btn"
+  search_input: "com.taobao.idlefish:id/search_input"
+  search_confirm: "com.taobao.idlefish:id/search_confirm"
+  
+  # 商品页面相关
+  product_title: "//android.widget.TextView[contains(@resource-id,'title')]"
+  product_price: "//android.widget.TextView[contains(@text,'¥')]"
+  product_seller: "//android.widget.TextView[contains(@resource-id,'seller')]"
+  product_location: "//android.widget.TextView[contains(@text,'市') or contains(@text,'区')]"
+  
+  # 评论相关
+  comment_input:
+    - "//android.widget.EditText[contains(@hint,'评论')]"
+    - "//android.widget.EditText[contains(@hint,'留言')]"
+    - "//android.widget.EditText[contains(@hint,'说点什么')]"
+  comment_send:
+    - "//android.widget.Button[contains(@text,'发送')]"
+    - "//android.widget.TextView[contains(@text,'发送')]"
+    - "//android.widget.ImageView[contains(@resource-id,'send')]"
+  comment_area: "//android.widget.TextView[contains(@text,'评论')]"
+  
+  # 导航相关
+  back_btn: "//android.widget.ImageView[contains(@resource-id,'back')]"
+  home_tab: "//android.widget.TextView[@text='首页']"
+  message_tab: "//android.widget.TextView[@text='消息']"
+
+# 评论模板配置
+comment_templates:
+  inquiry:
+    - "这个价格还能优惠一些吗？"
+    - "包邮吗？可以小刀一下吗？"
+    - "能便宜点吗？诚心想要"
+    - "这个还有优惠空间吗？"
+    - "还在吗？能便宜点不？"
+    - "价格可以商量吗？"
+    - "最低多少钱？"
+    - "支持小刀吗？"
+  
+  interest:
+    - "这个还在吗？很感兴趣"
+    - "东西看起来不错，用了多久？"
+    - "正好需要这个，质量怎么样？"
+    - "有意向，可以详细介绍一下吗？"
+    - "看起来挺好的，成色如何？"
+    - "很心动，有什么需要注意的吗？"
+    - "想了解一下具体情况"
+    - "这个我很喜欢"
+  
+  compliment:
+    - "保养得真好，卖家很用心"
+    - "这个价格很合理，良心价"
+    - "东西看起来跟新的一样"
+    - "品相不错，值得购买"
+    - "卖家很实诚，东西不错"
+    - "质量看起来很好"
+    - "保养得很好呢"
+    - "真的很新"
+  
+  comparison:
+    - "和新的比起来性价比怎么样？"
+    - "这款和XX品牌的有什么区别？"
+    - "比全新便宜多少？功能一样吗？"
+    - "这个型号和新版本差别大吗？"
+    - "相比其他卖家，你这个有什么优势？"
+    - "跟专柜正品有区别吗？"
+    - "这个配置够用吗？"
+  
+  concern:
+    - "先关注一下，考虑考虑"
+    - "收藏了，过几天联系"
+    - "关注了，有优惠通知我"
+    - "先收藏，对比一下"
+    - "看中了，再想想"
+    - "已关注，等等看"
+    - "收藏了，过两天决定"
+
+# 数据库配置
+database:
+  products_db: "data/products.db"
+  comments_db: "data/comments.db"
+  backup_interval: 24  # 备份间隔（小时）
+  max_backup_count: 7  # 最大备份数量
+
+# 日志配置
+logging:
+  level: "INFO"
+  file_path: "data/logs/xianyu_assistant.log"
+  max_file_size: "10MB"
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# 系统监控配置
+monitoring:
+  check_interval: 5       # 检查间隔（秒）
+  memory_threshold: 500   # 内存阈值（MB）
+  cpu_threshold: 80       # CPU阈值（%）
+  error_threshold: 10     # 连续错误阈值

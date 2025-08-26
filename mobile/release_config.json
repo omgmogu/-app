@@ -1,0 +1,46 @@
+{
+  "app_info": {
+    "package_name": "com.xianyuassistant.xianyucommentassistant",
+    "app_name": "闲鱼自动评论助手",
+    "version_code": 1,
+    "version_name": "1.0.0",
+    "min_sdk_version": 23,
+    "target_sdk_version": 33,
+    "compile_sdk_version": 33
+  },
+  "signing": {
+    "keystore_file": "keystore/release.keystore",
+    "keystore_password": "",
+    "key_alias": "xianyuassistant",
+    "key_password": "",
+    "validity_years": 25
+  },
+  "build": {
+    "enable_proguard": false,
+    "enable_r8": true,
+    "shrink_resources": true,
+    "zip_align": true,
+    "generate_mapping": true
+  },
+  "distribution": {
+    "enable_app_bundle": false,
+    "enable_multiple_apks": true,
+    "architectures": [
+      "armeabi-v7a",
+      "arm64-v8a"
+    ],
+    "universal_apk": true
+  },
+  "security": {
+    "enable_code_obfuscation": false,
+    "enable_string_encryption": false,
+    "enable_api_key_protection": true,
+    "remove_debug_info": true
+  },
+  "optimization": {
+    "enable_aapt2": true,
+    "optimize_resources": true,
+    "compress_native_libs": true,
+    "enable_multidex": false
+  }
+}

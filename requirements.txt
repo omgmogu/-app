@@ -1,0 +1,46 @@
+# 移动端闲鱼自动评论助手依赖包
+# Python 3.8+ 必需
+
+# 移动端自动化核心
+appium-python-client>=2.11.0
+selenium>=4.15.0
+
+# HTTP请求和API调用
+requests>=2.31.0
+aiohttp>=3.8.0
+
+# 数据库
+# sqlite3 (Python内置)
+
+# GUI界面
+# tkinter (Python内置)
+
+# 图像处理
+Pillow>=10.0.0
+
+# 数据处理
+pandas>=2.0.0
+
+# 日志和配置
+pyyaml>=6.0.1
+loguru>=0.7.0
+
+# 加密和安全
+cryptography>=41.0.0
+
+# 时间处理
+python-dateutil>=2.8.2
+
+# 系统工具
+psutil>=5.9.0
+
+# 文本处理
+jieba>=0.42.1
+
+# 开发和测试工具（可选）
+pytest>=7.4.0
+black>=23.7.0
+flake8>=6.1.0
+
+# DeepSeek API（如果有官方包的话，否则使用requests）
+# deepseek-api (如果存在)

@@ -1,0 +1,34 @@
+# 移动端Kivy应用依赖
+# 核心框架
+kivy>=2.1.0
+kivymd>=1.1.1
+
+# Android打包
+buildozer>=1.4.0
+cython>=0.29.32
+python-for-android>=2023.6.11
+
+# 原有项目依赖 (移动端优化版本)
+requests>=2.31.0
+pyyaml>=6.0.1
+sqlite3  # Python内置
+
+# Android特定
+plyer>=2.1.0  # Android系统接口
+android-permissions>=0.1.0  # 权限管理
+
+# 网络和API
+aiohttp>=3.8.0
+urllib3>=1.26.0
+
+# 数据处理
+python-dateutil>=2.8.2
+
+# 文本处理 (轻量版)
+jieba>=0.42.1
+
+# 日志
+loguru>=0.7.0  # 替代标准logging，更适合移动端
+
+# UI组件增强
+kivymd-extensions>=0.2.0
